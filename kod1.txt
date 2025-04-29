@@ -128,7 +128,7 @@ if(t1==t2==t3):
 else:
     print("Błąd")
 #komentarz
-#komentarz2
+#komentarz3
 
 
 
