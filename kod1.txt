@@ -1,0 +1,132 @@
+from random import randint
+from sympy import isprime
+
+
+#fcja geenrujaca elementy dziedziny
+def dziedzina():
+    
+    #długość charakterystyki ciała p wyrazona w bitach
+    b=10
+    
+    
+    #szukanie takiego n, ze jest liczba pierwsza, jest w odpowiedniej dluogsci w bitach
+    #i stworzona z nim liczba p tez bedzie perwsza
+    n = 0
+    while not (isprime(n) and isprime(2*n+1)):
+        n=randint(2**(b-1),2**(b)-1)
+    
+    #policzenie p
+    p=2*n+1
+    
+    #policzenie g takiego, ze g^n ≡ 1 (mod p)
+    g=2
+    while pow(g,n,p) != 1:
+        g+=1
+
+
+    return p,n,g
+
+#klasa dla uczestnika wraz z funkcjami
+#stwierdzilam ze obiektowo bedzie mi latwiej, ale nie jestem pewna czy moglam tak zrobic
+class Uczestnik:
+    
+    #atrybutami uczestnika sa elementy dziedziny
+    def __init__(self, up, un, ug):
+        self.p = up
+        self.n = un
+        self.g = ug
+    
+    #fcja do generacji kluczy
+    def generacja(self):
+        #wygenerowanie losowo klucza prywatnego z odpowiedniego przedzialu
+        self.__kpriv = randint(2, self.n - 1)
+        #policznie klucza publicznego kpub = g^(kpirv) mod p
+        self.kpub = pow(self.g, self.__kpriv, self.p)
+
+    #fcja do policzenia tajnej liczby
+    #w zaleznosci jak uzyta moze sluzyc dla 2 lub wiecej uczestnikow
+    def tajna_liczba(self, kcudze):
+        
+        #tajna liczba: kcudze^kpriv mod p
+        s = pow(kcudze, self.__kpriv, self.p)
+        return s
+
+
+    #fcja do wypisania kluczy (bo kpriv to atrybut prywaty)
+    def wypisz(self):
+        print(self.__kpriv, self.kpub)
+
+
+
+
+
+
+#  wywyłanie    
+    
+p,n,g = dziedzina()
+
+
+print("oto dziedzina (p,n,q): ", p,n,g)
+
+
+#stworzenie instacnji klas
+Alicja = Uczestnik(p,n,g)
+Bob = Uczestnik(p,n,g)
+Celina = Uczestnik(p,n,g)
+
+#wygenerowanie kluczy
+Alicja.generacja()
+Bob.generacja()
+Celina.generacja()
+
+print("klucze alicji (kpriv, kpub): ")
+Alicja.wypisz()
+
+print("klucze boba (kpriv, kpub): ")
+Bob.wypisz()
+
+print("klucze celiny (kpriv, kpub): ")
+Celina.wypisz()
+
+
+
+
+#obliczenie tajnej liczby w przypadku 3 uczestnikow w jednej sesji 
+#g^(abc) mod p
+#kazdy liczy sam
+t1 = Alicja.tajna_liczba(Bob.tajna_liczba(Celina.kpub))
+
+t2 = Bob.tajna_liczba(Alicja.tajna_liczba(Celina.kpub))
+
+t3 = Celina.tajna_liczba(Alicja.tajna_liczba(Bob.kpub))
+
+
+'''
+#dla przypadku 2 uczestnikow:
+#g^(ab) mod p
+
+t1 = Alicja.tajna_liczba(Bob.kpub)
+
+t2 = Bob.tajna_liczba(Alicja.kpub)
+
+
+'''
+
+
+#sprawdzenie czy tajna liczba sie zgadza wszystkim
+
+print("liczba wg Alicji: ", t1)
+print("liczba wg Boba: ", t2)
+print("liczba wg Celiny: ",t3)
+
+
+print("czy tajne liczby się zgadzaja?")
+
+
+if(t1==t2==t3):
+    print("tak zgadzają się, tajna liczba to: ", t1)
+else:
+    print("Błąd")
+
+
+
