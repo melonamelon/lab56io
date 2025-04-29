@@ -128,5 +128,6 @@ if(t1==t2==t3):
 else:
     print("Błąd")
 
+#komentarz do próby force pusha
 
 
