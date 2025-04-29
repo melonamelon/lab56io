@@ -127,7 +127,6 @@ if(t1==t2==t3):
     print("tak zgadzają się, tajna liczba to: ", t1)
 else:
     print("Błąd")
-#komentarz
 
 
 
